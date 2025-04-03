@@ -1,0 +1,12 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #A3C551;
+  --color-secondary: #C5C7F3;
+  --color-accent: #D3A2DD;
+}
+
+html {
+  direction: rtl;
+  text-align: right;
+}
