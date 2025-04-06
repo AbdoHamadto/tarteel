@@ -1,4 +1,4 @@
-import { CircleUserRound } from "lucide-react"
+import { Check, CircleUserRound, Trash2, X } from "lucide-react"
 import { useState } from "react";
 import { useLocation } from "react-router-dom"
 import Select, { MultiValue } from 'react-select';
@@ -10,13 +10,20 @@ interface OptionType {
 }
 
 export default function DetailsStudent() {
-  const [selectedOption, setSelectedOption] = useState<MultiValue<OptionType>>([]);
-  const [selectedPage, setSelectedPage] = useState<MultiValue<OptionType>>([]);
-  const [selectedPart, setSelectedPart] = useState<MultiValue<OptionType>>([]);
-
-  // console.log(selectedOption)
   const location = useLocation()
   const message = location.state
+
+  const [selectedSurah, setSelectedSurah] = useState<MultiValue<OptionType>>([]);
+  const [selectedPart, setSelectedPart] = useState<MultiValue<OptionType>>([]);
+  const [selectedPage, setSelectedPage] = useState<MultiValue<OptionType>>([]);
+  const [selectedOption, setSelectedOption] = useState<MultiValue<OptionType>>([]);
+
+  const handelClearAll = () => {
+    setSelectedSurah([])
+    setSelectedPage([])
+    setSelectedPart([])
+    setSelectedOption([])
+  }
 
   const options = [
     { value: 'apple', label: '🍎 Apple' },
@@ -32,7 +39,8 @@ export default function DetailsStudent() {
         <div className="flex justify-between p-2 w-full mb-4">
           <Select 
             options={data.surahs} 
-            onChange={setSelectedOption}
+            value={selectedSurah}
+            onChange={setSelectedSurah}
             components={{ ClearIndicator: () => null }}
             className="w-full"
             isMulti
@@ -53,6 +61,7 @@ export default function DetailsStudent() {
           <div className="w-full mx-3">
             <Select 
               options={Array.from({ length: 30 }, (_, i) => ({ value: `part-${i + 1}`, label: `جزء ${i + 1}` }))} 
+              value={selectedPart}
               onChange={setSelectedPart}
               components={{ ClearIndicator: () => null }}
               className="w-full"
@@ -71,7 +80,8 @@ export default function DetailsStudent() {
 
           <div className="w-full mx-3">
             <Select 
-              options={options} 
+              options={options}
+              value={selectedOption} 
               onChange={setSelectedOption}
               components={{ ClearIndicator: () => null }}
               className="w-full"
@@ -90,6 +100,7 @@ export default function DetailsStudent() {
 
           <Select 
             options={Array.from({ length: 604 }, (_, i) => ({value: `${i + 1}`,label: `صفحة ${i + 1}`}))} 
+            value={selectedPage}
             onChange={setSelectedPage}
             components={{ ClearIndicator: () => null }}
             className="w-full"
@@ -105,10 +116,58 @@ export default function DetailsStudent() {
             }}
           />
         </div>
-        <div className="w-11/12 border-2 border-gray-400 h-full rounded-lg">
-          {selectedPart.map((item) =><p className="flex">{item.label}</p>)}
-          {selectedOption.map((item) =><p className="flex">{item.label}</p>)}
-          {selectedPage.map((item) =><p className="flex">{item.label}</p>)}
+        <div className="w-11/12 min-h-30 border-2 border-gray-400 rounded-lg flex p-2 relative flex-wrap gap-2">
+          <div 
+            onClick={handelClearAll}
+            className="absolute left-1 text-red-500 cursor-pointer hover:bg-red-400 hover:text-white p-1 rounded-lg hover:shadow-lg"
+          >
+            <Trash2 />
+          </div>
+          <div 
+            onClick={handelClearAll}
+            className="absolute left-10 text-green-500 cursor-pointer hover:bg-green-400 hover:text-white p-1 rounded-lg hover:shadow-lg"
+          >
+            <Check />
+          </div>
+          {selectedSurah.map((item) =>
+            <div key={item.value} className="flex justify-center items-center h-fit bg-gray-300 mx-1 p-1 rounded-xl">
+              <p className="text-gray-700">{item.label}</p>
+              <X
+                onClick={() =>
+                  setSelectedSurah(prev => prev.filter(i => i.value !== item.value))
+                }
+                className="mr-4 text-gray-500 hover:text-red-500 cursor-pointer hover:rotate-90 transition-transform duration-300"
+                size={15}
+                strokeWidth={3}
+              />
+            </div>
+          )}
+          {selectedPart.map((item) =>
+            <div key={item.value} className="flex justify-center items-center h-fit bg-gray-300 mx-1 p-1 rounded-xl">
+              <p className="text-gray-700">{item.label}</p>
+              <X
+                onClick={() =>
+                  setSelectedPart(prev => prev.filter(i => i.value !== item.value))
+                }
+                className="mr-4 text-gray-500 hover:text-red-500 cursor-pointer hover:rotate-90 transition-transform duration-300"
+                size={15}
+                strokeWidth={3}
+              />
+            </div>
+          )}
+          {selectedPage.map((item) =>
+            <div key={item.value} className="flex justify-center items-center h-fit bg-gray-300 mx-1 p-1 rounded-xl">
+              <p className="text-gray-700">{item.label}</p>
+              <X
+                onClick={() =>
+                  setSelectedPage(prev => prev.filter(i => i.value !== item.value))
+                }
+                className="mr-4 text-gray-500 hover:text-red-500 cursor-pointer hover:rotate-90 transition-transform duration-300"
+                size={15}
+                strokeWidth={3}
+              />
+            </div>
+          )}
         </div>
 
         {/* student here */}
