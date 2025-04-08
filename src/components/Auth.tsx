@@ -100,11 +100,11 @@ export default function AuthPage() {
   };
 
   return (
-    <div className='w-full min-h-screen flex justify-center items-center bg-gradient-to-b from-[#faf5ff] to-[#e9d5ff]'>
+    <div className='w-full min-h-screen flex justify-center items-center bg-slate-100'>
 
-      <div className="max-w-md w-11/12 mx-auto my-auto p-6 bg-white shadow-lg rounded">
+      <div className="max-w-md w-2xl mx-auto my-auto p-6 bg-white shadow-lg rounded-2xl">
         <div className="flex justify-around mb-4">
-          <p className='text-lg font-bold'>{isLogin ? "تسجيل الدخول" : "إنشاء حساب"}</p>
+          <p className='text-lg font-bold font-rubik'>{isLogin ? "تسجيل الدخول" : "إنشاء حساب"}</p>
         </div>
 
         <Formik<FormValues>
@@ -136,7 +136,7 @@ export default function AuthPage() {
                 type="email" 
                 id="email" 
                 name="email" 
-                className="w-full p-2 border rounded mt-1 outline-none"
+                className="w-full p-2 border rounded mt-2 outline-none"
                 placeholder="البريد الالكتروني"
               />
               <ErrorMessage name="email" component="div" className="text-sm text-red-500" />
@@ -147,7 +147,7 @@ export default function AuthPage() {
                 type="password" 
                 id="password" 
                 name="password" 
-                className="w-full p-2 border rounded mt-1 outline-none"
+                className="w-full p-2 border rounded mt-2 outline-none"
                 placeholder="كلمه السر"
               />
               <ErrorMessage name="password" component="div" className="text-sm text-red-500" />
@@ -188,7 +188,7 @@ export default function AuthPage() {
           {isLogin ? (
             <>
               ليس لديك حساب؟{' '}
-              <button onClick={() => setIsLogin(false)} className="text-blue-500 cursor-pointer">
+              <button onClick={() => setIsLogin(false)} className="text-blue-500 cursor-pointer font-medium">
                 سجل هنا
               </button>
             </>
