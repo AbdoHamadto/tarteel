@@ -17,11 +17,12 @@ export interface halaqa {
 const mapRecordToHalaqa = (record: RecordModel): halaqa => ({
   id: record.id,
   name: record.name,
-  students: record.students,
-  waitingStudents: record.waiting_students,
+  students: record.students ?? [],
+  waitingStudents: record.waiting_students ?? [],
   user: record.user,
   halaqa_id: record.halaqa_id,
 });
+
 
 export const fetchHalaqa = async (): Promise<halaqa[]> => {
   const res = await db.collection("halaqa").getFullList();
@@ -98,13 +99,27 @@ export const useGetUserStudents = () => {
 
 // move studentd from waiting to students arr
 
-export const moveStudentsFromWaiting = async (halaqaId: string, halaqa?: halaqa, deleteStudents?: string[], studentId?: string) => {
+export const moveStudentsFromWaiting = async (
+  halaqaId: string,
+  halaqa?: halaqa,
+  deleteStudents?: string[],
+  studentId?: string
+) => {
+  console.log("🧪 داخل moveStudentsFromWaiting");
+  console.log("✅ halaqa:", halaqa);
+  console.log("✅ studentId:", studentId);
+
+  if (!halaqa || !studentId) {
+    console.error("❌ مشكلة: halaqa أو studentId ناقص.");
+    throw new Error("بيانات غير كاملة: halaqa أو studentId ناقص.");
+  }
+
   return await db.collection("halaqa").update(halaqaId, {
     ...halaqa,
-    waiting_students: [...(deleteStudents || [])],
-    students: [...(halaqa?.students || []), studentId]
+    waiting_students: deleteStudents ?? [],
+    students: [...(halaqa.students || []), studentId],
   });
-}
+};
 
 // remove studentd from waiting
 

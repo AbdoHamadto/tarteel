@@ -1,64 +1,73 @@
 import { useLocation } from "react-router-dom";
 import { useGetHalaqat, db, useGetUserStudents, moveStudentsFromWaiting, removeStudentsFromWaiting } from "../data/db";
 import { Check, X } from "lucide-react";
-// import { useMutation } from "@tanstack/react-query";
-// import { toast } from "react-toastify";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "react-toastify";
 
 export default function OrderList() {
   const location = useLocation()
   const message = location.state
+  const queryClient = useQueryClient()
 
-  const { data: ElHalaqat, isLoading, isError, error } = useGetHalaqat()
+  const { data: ElHalaqat, isLoading, isError, error, refetch } = useGetHalaqat()
   const filterData = ElHalaqat?.filter((item) => item.user === db.authStore.model?.id).filter((item) => item.name === message.name)[0]
   
   const { data: userStudents } = useGetUserStudents()
 
+  
+  const moveStudentMutation = useMutation({
+    mutationFn: async ({studentId ,name} : {studentId: string, name: string | undefined}) => {
+      const filterRecorde = ElHalaqat?.find((item) => item.id === message.id)
+      const updateRecord = ElHalaqat?.filter((item) => item.id === message.id)[0].waitingStudents.filter((item) => item !== studentId)
+
+      // console.log("✅ studentId:", studentId);
+      // console.log("✅ filterRecorde:", filterRecorde);
+      console.log(message.id)
+
+      const data = {
+        name: name,
+        idHalaqa: message.id,
+        idStudent: studentId,
+        score: "0",
+      }
+      db.collection("detailsHalaqa").create(data)
+      moveStudentsFromWaiting(message.id, filterRecorde, updateRecord, studentId)
+    },
+    onSuccess: () => {
+      toast.success("تم تسجيل الحساب بنجاح! 🎉");
+      queryClient.invalidateQueries({ queryKey: ["halaqa"] });
+    },
+    onError: (error: any) => {
+      alert(`حدث خطأ أثناء التسجيل: ${error.message}`);
+    },
+  });
+  
+  const addStudentToHalaqa = (studentId: string ,name: string | undefined) => {
+    moveStudentMutation.mutate({ studentId, name})
+  }
+  
+  const removeStudentMutation = useMutation({
+    mutationFn: async ({studentId} : {studentId: string}) => {
+      const filterRecorde = ElHalaqat?.filter((item) => item.id === message.id)[0]
+      const updateRecord = ElHalaqat?.filter((item) => item.id === message.id)[0].waitingStudents.filter((item) => item !== studentId)
+      removeStudentsFromWaiting(message.id, filterRecorde, updateRecord)
+    },
+    onSuccess: () => {
+      toast.success("تم الحذف بنجاح")
+      queryClient.invalidateQueries({ queryKey: ["halaqa"] });
+    },
+    onError: (error: any) => {
+      alert(`حدث خطأ أثناء التسجيل: ${error.message}`);
+    }
+  })
+  
+  const removeStudent = (studentId: string) => {
+    removeStudentMutation.mutate({studentId})
+  }
+
   if (isLoading) return <p className="text-blue-500">Loading...</p>;
   if (isError) return <p className="text-red-500">Error: {error?.message}</p>;
-
-  // const moveStudent = useMutation({
-  //   mutationFn: ({studentId ,name} : {studentId: string, name: string | undefined}) =>
-  //     const filterRecorde = ElHalaqat?.filter((item) => item.id === message.id)[0]
-  //     const updateRecord = ElHalaqat?.filter((item) => item.id === message.id)[0].waitingStudents.filter((item) => item !== studentId)
-
-  //     console.log(updateRecord)
-  //     const data = {
-  //       name: name,
-  //       idHalaqa: message.id,
-  //       score: "0",
-  //     }
-  //     db.collection("detailsHalaqa").create(data)
-  //     moveStudentsFromWaiting(message.id, filterRecorde, updateRecord)
-  //   ,
-  //   onSuccess: () => {
-  //     toast.success("تم تسجيل الحساب بنجاح! 🎉");
-  //   },
-  //   onError: (error: any) => {
-  //     alert(`حدث خطأ أثناء التسجيل: ${error.message}`);
-  //   },
-  // });
-
-  const addStudentToHalaqa = (studentId: string ,name: string | undefined) => {
-    // useMutation(studentId, name)
-    const filterRecorde = ElHalaqat?.filter((item) => item.id === message.id)[0]
-    const updateRecord = ElHalaqat?.filter((item) => item.id === message.id)[0].waitingStudents.filter((item) => item !== studentId)
-
-    console.log(updateRecord)
-    const data = {
-      name: name,
-      idHalaqa: message.id,
-      score: "0",
-    }
-    db.collection("detailsHalaqa").create(data)
-    moveStudentsFromWaiting(message.id, filterRecorde, updateRecord, studentId)
-  }
-
-  const removeStudent = (studentId: string) => {
-    const filterRecorde = ElHalaqat?.filter((item) => item.id === message.id)[0]
-    const updateRecord = ElHalaqat?.filter((item) => item.id === message.id)[0].waitingStudents.filter((item) => item !== studentId)
-    removeStudentsFromWaiting(message.id, filterRecorde, updateRecord)
-  }
-
+  
   return (
     <div className="w-full h-[calc(100vh-40px)] bg-gray-200 flex justify-center p-2">
       <div className="w-[900px] max-w-4/5 h-full border-2 border-gray-600 rounded-lg overflow-y-auto">
@@ -76,7 +85,7 @@ export default function OrderList() {
                   <p className="mr-2">{student?.name}</p>
                 </div>
                 <div className="flex">
-                  <div onClick={() => addStudentToHalaqa(item ,student?.name)} className="bg-green-600 rounded-lg size-7 flex justify-center items-center text-white cursor-pointer hover:bg-green-500">
+                  <div onClick={() => addStudentToHalaqa( item ,student?.name)} className="bg-green-600 rounded-lg size-7 flex justify-center items-center text-white cursor-pointer hover:bg-green-500">
                     <Check />
                   </div>
                   <div onClick={() => removeStudent(item)} className="bg-red-600 rounded-lg size-7 flex justify-center items-center text-white cursor-pointer hover:bg-red-500 mr-3">

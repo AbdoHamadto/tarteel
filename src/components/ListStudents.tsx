@@ -22,7 +22,7 @@ export default function ListStudents({ students , nameHalaqa}: ListStudentsProps
     })
   }
   return (
-    <div>
+    <div className="overflow-y-auto h-[390px]">
       {students?.map((item, index) => 
         <div onClick={() => handelGoToDetailsStudent(item.name, item.score)} key={item.id} className="flex justify-between p-2 w-4/5 mx-auto border border-gray-600 rounded-lg mb-4 hover:bg-gray-300 cursor-pointer">
           <div className="flex">

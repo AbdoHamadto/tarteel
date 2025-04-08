@@ -16,7 +16,7 @@ export default function Educational() {
   })
 
   const addHalaqa = useMutation({
-    mutationFn: ({name} : {name: string}) =>  // , student: string[], wating: string[], user: string , student, wating, user
+    mutationFn: ({name} : {name: string}) => 
       db.collection('halaqa').create({name, student: [], waiting: [], user: db.authStore.model?.id, halaqa_id: Math.floor(Math.random() * 1000001).toString()})
     ,
     onSuccess: () => {

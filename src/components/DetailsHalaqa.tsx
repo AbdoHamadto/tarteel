@@ -49,7 +49,7 @@ export default function DetailsHalaqa() {
             <p className="font-bold text-2xl mt-3 mb-4">الطلاب</p>
             <hr className="w-2/4 mb-5"/>
           </div>
-          <div className="overflow-y-auto">
+          <div>
             <ListStudents students={filterStudents} nameHalaqa={message.name} />
           </div>
         </div>
