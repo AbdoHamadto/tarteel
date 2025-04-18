@@ -1,8 +1,9 @@
 import { Check, CircleUserRound, Trash2, X } from "lucide-react"
 import { useState } from "react";
 import { useLocation } from "react-router-dom"
-import Select, { MultiValue } from 'react-select';
+import { MultiValue } from 'react-select';
 import data from '../data/data.json'
+import SelecteComponent from "./SelecteComponent";
 
 interface OptionType {
   value: string;
@@ -18,11 +19,16 @@ export default function DetailsStudent() {
   const [selectedPage, setSelectedPage] = useState<MultiValue<OptionType>>([]);
   const [selectedOption, setSelectedOption] = useState<MultiValue<OptionType>>([]);
 
-  const handelClearAll = () => {
+  const handleClearAll = () => {
     setSelectedSurah([])
     setSelectedPage([])
     setSelectedPart([])
     setSelectedOption([])
+  }
+
+  const handleSubmitAssignments = () => {
+    const mergedArray = [...selectedSurah, ...selectedPart, ...selectedPage, ...selectedOption]
+    console.log(mergedArray)
   }
 
   const options = [
@@ -37,94 +43,45 @@ export default function DetailsStudent() {
       <div className="col-span-4 row-span-6 border-2 border-gray-500 flex flex-col items-center mt-2 rounded-lg">
 
         <div className="flex justify-between p-2 w-full mb-4">
-          <Select 
+          <SelecteComponent 
             options={data.surahs} 
-            value={selectedSurah}
-            onChange={setSelectedSurah}
-            components={{ ClearIndicator: () => null }}
-            className="w-full"
-            isMulti
-            placeholder="اختار سورة..."
-            styles={{
-              multiValueLabel: () => ({
-                display: "none"
-              }),
-              multiValueRemove: () => ({
-                display: "none"
-              }),
-              clearIndicator: () => ({
-                display: "none"
-              })
-            }}
+            value={selectedSurah} 
+            change={setSelectedSurah} 
+            placeHolder="اختار سورة..." 
           />
-
           <div className="w-full mx-3">
-            <Select 
+            <SelecteComponent  
               options={Array.from({ length: 30 }, (_, i) => ({ value: `part-${i + 1}`, label: `جزء ${i + 1}` }))} 
               value={selectedPart}
-              onChange={setSelectedPart}
-              components={{ ClearIndicator: () => null }}
-              className="w-full"
-              isMulti
-              placeholder="اختار جزء..."
-              styles={{
-                multiValueLabel: () => ({
-                  display: "none"
-                }),
-                multiValueRemove: () => ({
-                  display: "none"
-                })
-              }}
+              change={setSelectedPart}
+              placeHolder="اختار جزء..."
             />
           </div>
-
           <div className="w-full mx-3">
-            <Select 
-              options={options}
-              value={selectedOption} 
-              onChange={setSelectedOption}
-              components={{ ClearIndicator: () => null }}
-              className="w-full"
-              isMulti
-              placeholder="اختار ربع..."
-              styles={{
-                multiValueLabel: () => ({
-                  display: "none"
-                }),
-                multiValueRemove: () => ({
-                  display: "none"
-                })
-              }}
+            <SelecteComponent  
+              options={options} 
+              value={selectedOption}
+              change={setSelectedOption}
+              placeHolder="اختار ربع..."
             />
           </div>
-
-          <Select 
+          <SelecteComponent  
             options={Array.from({ length: 604 }, (_, i) => ({value: `${i + 1}`,label: `صفحة ${i + 1}`}))} 
             value={selectedPage}
-            onChange={setSelectedPage}
-            components={{ ClearIndicator: () => null }}
-            className="w-full"
-            isMulti
-            placeholder="اختار صفحة..."
-            styles={{
-              multiValueLabel: () => ({
-                display: "none"
-              }),
-              multiValueRemove: () => ({
-                display: "none"
-              })
-            }}
+            change={setSelectedPage}
+            placeHolder="اختار صفحة..."
           />
         </div>
-        <div className="w-11/12 min-h-30 border-2 border-gray-400 rounded-lg flex p-2 relative flex-wrap gap-2">
+
+        <div className="w-11/12 h-36 border-2 border-gray-400 rounded-lg flex p-2 relative flex-wrap gap-2 overflow-y-auto">
           <div 
-            onClick={handelClearAll}
+            onClick={handleClearAll}
             className="absolute left-1 text-red-500 cursor-pointer hover:bg-red-400 hover:text-white p-1 rounded-lg hover:shadow-lg"
           >
             <Trash2 />
           </div>
           <div 
-            onClick={handelClearAll}
+            onClick={handleSubmitAssignments}
             className="absolute left-10 text-green-500 cursor-pointer hover:bg-green-400 hover:text-white p-1 rounded-lg hover:shadow-lg"
           >
             <Check />
@@ -169,7 +126,9 @@ export default function DetailsStudent() {
             </div>
           )}
         </div>
-
+        <div className="">
+          
+        </div>
         {/* student here */}
       </div>
 

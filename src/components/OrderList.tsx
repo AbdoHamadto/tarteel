@@ -36,6 +36,7 @@ export default function OrderList() {
     onSuccess: () => {
       toast.success("تم تسجيل الحساب بنجاح! 🎉");
       queryClient.invalidateQueries({ queryKey: ["halaqa"] });
+      queryClient.invalidateQueries({ queryKey: ["halaqaDetails"] });
     },
     onError: (error: any) => {
       alert(`حدث خطأ أثناء التسجيل: ${error.message}`);
@@ -78,17 +79,17 @@ export default function OrderList() {
         {filterData?.waitingStudents.map((item, index) => {
           const student = userStudents?.find((i) => i.id === item);
           return (
-            <div key={index} className="flex justify-between p-2 w-4/5 mx-auto border border-gray-600 rounded-lg mb-4 ">
+            <div key={index} className="flex justify-between p-2 w-4/5 mx-auto border border-gray-600 rounded-lg mb-4">
               <div className="flex justify-between w-full">
                 <div className="flex">
                   <p>{index + 1} -</p>
                   <p className="mr-2">{student?.name}</p>
                 </div>
                 <div className="flex">
-                  <div onClick={() => addStudentToHalaqa( item ,student?.name)} className="bg-green-600 rounded-lg size-7 flex justify-center items-center text-white cursor-pointer hover:bg-green-500">
+                  <div onClick={() => addStudentToHalaqa( item ,student?.name)} className="hover:bg-green-400 rounded-lg size-7 flex justify-center items-center text-green-600 cursor-pointer hover:text-white">
                     <Check />
                   </div>
-                  <div onClick={() => removeStudent(item)} className="bg-red-600 rounded-lg size-7 flex justify-center items-center text-white cursor-pointer hover:bg-red-500 mr-3">
+                  <div onClick={() => removeStudent(item)} className="hover:bg-red-400 rounded-lg size-7 flex justify-center items-center text-red-600 cursor-pointer hover:text-white mr-3">
                     <X />
                   </div>
                 </div>
