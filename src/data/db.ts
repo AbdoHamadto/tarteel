@@ -105,10 +105,6 @@ export const moveStudentsFromWaiting = async (
   deleteStudents?: string[],
   studentId?: string
 ) => {
-  console.log("🧪 داخل moveStudentsFromWaiting");
-  console.log("✅ halaqa:", halaqa);
-  console.log("✅ studentId:", studentId);
-
   if (!halaqa || !studentId) {
     console.error("❌ مشكلة: halaqa أو studentId ناقص.");
     throw new Error("بيانات غير كاملة: halaqa أو studentId ناقص.");

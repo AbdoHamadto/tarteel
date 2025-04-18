@@ -8,22 +8,19 @@ export default function OrderList() {
   const location = useLocation()
   const message = location.state
   const queryClient = useQueryClient()
-
-  const { data: ElHalaqat, isLoading, isError, error, refetch } = useGetHalaqat()
-  const filterData = ElHalaqat?.filter((item) => item.user === db.authStore.model?.id).filter((item) => item.name === message.name)[0]
   
+  const { data: ElHalaqat, isLoading, isError, error } = useGetHalaqat()
   const { data: userStudents } = useGetUserStudents()
-
+  const filteredHalaqa = ElHalaqat?.find(
+    (item) =>
+      item.user === db.authStore.model?.id &&
+      item.name === message?.name
+  );
   
   const moveStudentMutation = useMutation({
     mutationFn: async ({studentId ,name} : {studentId: string, name: string | undefined}) => {
-      const filterRecorde = ElHalaqat?.find((item) => item.id === message.id)
-      const updateRecord = ElHalaqat?.filter((item) => item.id === message.id)[0].waitingStudents.filter((item) => item !== studentId)
-
-      // console.log("✅ studentId:", studentId);
-      // console.log("✅ filterRecorde:", filterRecorde);
-      console.log(message.id)
-
+      if (!filteredHalaqa) return;
+      const updatedWaiting = filteredHalaqa.waitingStudents.filter((id) => id !== studentId);
       const data = {
         name: name,
         idHalaqa: message.id,
@@ -31,12 +28,11 @@ export default function OrderList() {
         score: "0",
       }
       db.collection("detailsHalaqa").create(data)
-      moveStudentsFromWaiting(message.id, filterRecorde, updateRecord, studentId)
+      await moveStudentsFromWaiting(message.id, filteredHalaqa, updatedWaiting, studentId)
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       toast.success("تم تسجيل الحساب بنجاح! 🎉");
-      queryClient.invalidateQueries({ queryKey: ["halaqa"] });
-      queryClient.invalidateQueries({ queryKey: ["halaqaDetails"] });
+      await queryClient.invalidateQueries({ queryKey: ["halaqa"] });
     },
     onError: (error: any) => {
       alert(`حدث خطأ أثناء التسجيل: ${error.message}`);
@@ -49,13 +45,13 @@ export default function OrderList() {
   
   const removeStudentMutation = useMutation({
     mutationFn: async ({studentId} : {studentId: string}) => {
-      const filterRecorde = ElHalaqat?.filter((item) => item.id === message.id)[0]
-      const updateRecord = ElHalaqat?.filter((item) => item.id === message.id)[0].waitingStudents.filter((item) => item !== studentId)
-      removeStudentsFromWaiting(message.id, filterRecorde, updateRecord)
+      if (!filteredHalaqa) return;
+      const updatedWaiting = filteredHalaqa.waitingStudents.filter((id) => id !== studentId);
+      await removeStudentsFromWaiting(message.id, filteredHalaqa, updatedWaiting)
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       toast.success("تم الحذف بنجاح")
-      queryClient.invalidateQueries({ queryKey: ["halaqa"] });
+      await queryClient.invalidateQueries({ queryKey: ["halaqa"] });
     },
     onError: (error: any) => {
       alert(`حدث خطأ أثناء التسجيل: ${error.message}`);
@@ -76,7 +72,7 @@ export default function OrderList() {
           <p className="font-bold text-2xl mt-3 mb-4">قائمة الطلبات</p>
           <hr className="w-2/4 mb-5"/>
         </div>
-        {filterData?.waitingStudents.map((item, index) => {
+        {filteredHalaqa?.waitingStudents.map((item, index) => {
           const student = userStudents?.find((i) => i.id === item);
           return (
             <div key={index} className="flex justify-between p-2 w-4/5 mx-auto border border-gray-600 rounded-lg mb-4">
