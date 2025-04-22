@@ -42,7 +42,7 @@ export default function DetailsHalaqa() {
   }
 
   return (
-    <div className="w-full h-[calc(100vh-40px)] bg-gray-200 grid grid-cols-6 grid-rows-6 gap-4 p-2">
+    <div className="w-full h-[var(--height-screen)] bg-gray-200 grid grid-cols-6 grid-rows-6 gap-4 p-2">
       <div className="col-span-4 row-span-6 flex justify-between items-center flex-col">
         <div className="border-2 border-gray-600 rounded-lg w-full p-2 h-full mb-4">
           <div className="flex flex-col justify-center items-center p-3">

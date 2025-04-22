@@ -28,7 +28,7 @@ export default function SubscribeEducational() {
   return (
     <>
       {filterData?.length === 0 ? 
-        <div className="w-full h-[calc(100vh-40px)] flex flex-col justify-center items-center bg-gray-200">
+        <div className="w-full h-[var(--height-screen)] flex flex-col justify-center items-center bg-background">
           <p className="text-xl font-bold text-gray-600 mb-1">انت غير مشترك في اي حلقه</p>
           <a href="/search" className="text-lg text-gray-500 cursor-pointer flex">
             <p>اضغط هنا للبحث عن حلقات</p>
@@ -36,13 +36,13 @@ export default function SubscribeEducational() {
           </a>
         </div>
         :
-        <div className="w-full h-[calc(100vh-40px)] bg-gray-200 grid grid-cols-5 gap-4 p-2" >
+        <div className="w-full h-[var(--height-screen)] bg-background grid grid-cols-5 gap-6 p-6" >
           {
             filterData?.map((item) => (
               <div     
                 key={item.id} 
                 onClick={() => handelGoToDetailsStudent(item.name)}
-                className="h-50 rounded-lg bg-[#725fcc] cursor-pointer hover:bg-[#7764d9] flex justify-center items-center flex-col"
+                className="h-50 rounded-lg bg-secondary hover:bg-hoverbg cursor-pointer flex justify-center items-center flex-col transition ease-in-out hover:scale-110"
               >
                 <BookOpenText size={100} strokeWidth={1.5} />
                 <p><span className="font-bold">إسم الحلقة :</span> {item.name}</p>

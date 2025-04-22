@@ -103,8 +103,9 @@ export default function AuthPage() {
     <div className='w-full min-h-screen flex justify-center items-center bg-slate-100'>
 
       <div className="max-w-md w-2xl mx-auto my-auto p-6 bg-white shadow-lg rounded-2xl">
-        <div className="flex justify-around mb-4">
+        <div className="flex flex-col items-center justify-around mb-4">
           <p className='text-lg font-bold font-rubik'>{isLogin ? "تسجيل الدخول" : "إنشاء حساب"}</p>
+          <hr className='w-3/5 mt-1'/>
         </div>
 
         <Formik<FormValues>
@@ -154,23 +155,23 @@ export default function AuthPage() {
             </div>
             
             {!isLogin && (
-              <div className='w-full p-2 bg-accent  rounded flex justify-center items-center mb-4'>
-                <p>معلم</p>
+              <div className='w-full p-2 bg-primary  rounded flex justify-center items-center mb-4'>
+                <p className='text-white font-bold'>معلم</p>
                 <div 
                   onClick={() => setSwitchRole(!switchRole)}
-                  className={`w-1/4 mx-4 h-10 p-1 bg-amber-300 rounded-full cursor-pointer`}
+                  className={`w-1/4 mx-4 h-10 p-1 bg-secondary rounded-full cursor-pointer`}
                 >
                   <div className={`w-2/4 h-full p-1 rounded-full bg-blue-500 transition-transform duration-300 flex justify-center items-center ${switchRole ? 'translate-x-0' : '-translate-x-full' }`}>
                     <img src={switchRole ? teacher : student} alt="img" className='h-full' />
                   </div>
                 </div>
-                <p>طالب</p>
+                <p className='text-white font-bold'>طالب</p>
               </div>
             )}
 
             <button
               type="submit"
-              className="w-full bg-primary text-white p-2 rounded cursor-pointer"
+              className="w-full bg-primary hover:bg-hoverbg font-bold text-lg text-white p-2 rounded cursor-pointer"
               disabled={loginMutation.isPending || signupMutation.isPending}
             >
               {isLogin

@@ -40,15 +40,15 @@ export default function Educational() {
   if (isError) return <p className="text-red-500">Error: {error?.message}</p>;
 
   return (
-    <div className="w-full h-[calc(100vh-40px)] bg-gray-200 grid grid-cols-5 gap-4 p-2">
+    <div className="w-full h-[var(--height-screen)] bg-background grid grid-cols-5 gap-6 p-6">
       {filterData?.map((item) => (
-        <div onClick={() => handelGotoHalaqa(item.name, item.id)} key={item.id} className="h-50 rounded-lg bg-[#725fcc] cursor-pointer hover:bg-[#7764d9] flex justify-center items-center flex-col">
+        <div onClick={() => handelGotoHalaqa(item.name, item.id)} key={item.id} className="card-hover-effect relative overflow-hidden h-50 rounded-lg bg-secondary hover:bg-hoverbg cursor-pointer flex justify-center items-center flex-col transition ease-in-out hover:scale-110">
           <BookOpenText size={100} strokeWidth={1.5} />
           <p><span className="font-bold">إسم الحلقة :</span> {item.name}</p>
           <p><span className="font-bold">رقم السجل :</span> {item.halaqa_id}</p>
         </div>
       ))}
-      <div className="h-50 rounded-lg bg-[#725fcc]">
+      <div className="h-50 rounded-lg bg-secondary">
         <Formik
           initialValues={{ name: "" }}
           validationSchema={validationSchema}

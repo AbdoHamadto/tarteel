@@ -1,9 +1,10 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #A3C551;
-  --color-secondary: #C5C7F3;
-  --color-accent: #D3A2DD;
+  --color-primary: #0aa8a7;
+  --color-secondary: #70caca;
+  --color-hoverbg: #64adad;
+  --spacing-customWidth: 200px;
 }
 
 @font-face {
@@ -57,9 +58,34 @@
 
 :root {
   --default-font-family: Tajwal;
+  --height-screen: calc(100vh - 56px);
 }
 
 html {
   direction: rtl;
   text-align: right;
+}
+
+.card-hover-effect::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background-color: #0aa8a7;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 1s ease, height 1s ease;
+  z-index: -1;
+}
+
+.card-hover-effect:hover::before {
+  width: 250%;
+  height: 300%;
+}
+
+.card-hover-effect span {
+  position: relative;
+  z-index: 1;
 }

@@ -66,7 +66,7 @@ export default function OrderList() {
   if (isError) return <p className="text-red-500">Error: {error?.message}</p>;
   
   return (
-    <div className="w-full h-[calc(100vh-40px)] bg-gray-200 flex justify-center p-2">
+    <div className="w-full h-[var(--height-screen)] bg-gray-200 flex justify-center p-2">
       <div className="w-[900px] max-w-4/5 h-full border-2 border-gray-600 rounded-lg overflow-y-auto">
         <div className="flex flex-col justify-center items-center p-3">
           <p className="font-bold text-2xl mt-3 mb-4">قائمة الطلبات</p>
