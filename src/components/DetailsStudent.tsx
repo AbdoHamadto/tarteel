@@ -56,7 +56,7 @@ export default function DetailsStudent() {
 
   const { data: assignments } = useGetAssignments();
   const total = assignments?.reduce((sum, item) => sum + Number(item.totalScore), 0) ?? 0;
-  const targetScore = assignments?.length ? total / assignments.length : 0;
+  const targetScore = assignments?.length ? Math.round(total / assignments.length) : 0;
   
   return (
     <div className="w-full h-[var(--height-screen)] bg-gray-200 grid grid-cols-6 grid-rows-6 gap-4 p-2">

@@ -1,35 +1,73 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { db, useGetAssignments } from "../data/db"
 import { Check, X, Trash2 } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "react-toastify";
 
 export default function Assignments() {
   const queryClient = useQueryClient();
   const [selectScore, setSelectScore] = useState<{ [id: string]: boolean }>({});
   const [score, setScore] = useState<{ [id: string]: number }>({});
 
-  const doTeacher = db.authStore.model?.collectionName === "teachers"
-
+  // click for 24 hour
+  const [isAvailable, setIsAvailable] = useState<{ [id: string]: boolean }>({});
   const { data: assignments, isLoading, isError, error } = useGetAssignments()
 
+  const checkIfAvailableToday = (id: string): boolean => {
+    const lastClicked = localStorage.getItem(`button_last_clicked-${id}`);
+    const today = new Date().toISOString().split("T")[0];
+    return lastClicked !== today;
+  } ;
+
+  useEffect(() => {
+    if (!assignments) return;
+
+    const availability: { [id: string]: boolean } = {};
+    assignments.forEach((item) => {
+      availability[item.id] = checkIfAvailableToday(item.id);
+    });
+
+    setIsAvailable(availability);
+  }, [assignments]);
+  const doTeacher = db.authStore.model?.collectionName === "teachers"
+
   const handelUpdateScore = async (id: string) => {
-    if(doTeacher) {
-      if(selectScore[id]) {
-        const findAssignments = assignments?.find((item) => item.id === id)
-        await db.collection("assignments").update(id, {
-          ...findAssignments,
-          totalScore: `${score[id] === undefined ? '0' : score[id] >= 10 ? '10' : score[id]}`,
-        });
-        await queryClient.invalidateQueries({ queryKey: ["assignments"]});
-      }
-    } else {
-      const findAssignments = assignments?.find((item) => item.id === id)
-      if(!findAssignments) return;
+    const today = new Date().toISOString().split("T")[0];
+
+    if (!doTeacher && isAvailable[id]) {
+      const findAssignments = assignments?.find((item) => item.id === id);
+      if (!findAssignments) return;
+
       await db.collection("assignments").update(id, {
         ...findAssignments,
-        totalScore: `${+findAssignments.totalScore + 1 >= 10 ? '10' : +findAssignments.totalScore +1}`,
+        totalScore: `${
+          +findAssignments.totalScore + 1 >= 10
+            ? "10"
+            : +findAssignments.totalScore + 1
+        }`,
       });
-      await queryClient.invalidateQueries({ queryKey: ["assignments"]});
+
+      await queryClient.invalidateQueries({ queryKey: ["assignments"] });
+
+      // بعد التحديث فعلياً
+      localStorage.setItem(`button_last_clicked-${id}`, today);
+      setIsAvailable((prev) => ({ ...prev, [id]: false }));
+      toast("تم تسجيل الدرجة، جرّب تاني بعد 12 صباحاً");
+    }
+
+    // الجزء الخاص بالمعلم
+    if (doTeacher && selectScore[id]) {
+      const findAssignments = assignments?.find((item) => item.id === id);
+      if (!findAssignments) return;
+
+      await db.collection("assignments").update(id, {
+        ...findAssignments,
+        totalScore: `${
+          score[id] === undefined ? "0" : score[id] >= 10 ? "10" : score[id]
+        }`,
+      });
+
+      await queryClient.invalidateQueries({ queryKey: ["assignments"] });
     }
   }
 
@@ -97,7 +135,12 @@ export default function Assignments() {
               }}
               className="text-green-500 cursor-pointer hover:bg-green-400 hover:text-white p-1 rounded-lg hover:shadow-lg"
             >
-              <Check size={20} />
+              {isAvailable[item.id] ? (
+                  <Check size={20} />
+                ) : (
+                  <span className="text-xs text-gray-500">غداً</span>
+                )}
+              
             </div>
             {doTeacher && 
               <div
