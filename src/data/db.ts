@@ -125,3 +125,35 @@ export const removeStudentsFromWaiting = async (halaqaId: string, halaqa?: halaq
     waiting_students: [...(deleteStudents || [])],
   });
 }
+
+// get assignments
+
+export interface detailsAssignments {
+  id: string;
+  revision: string;
+  teacherid: string;
+  studentid: string;
+  score: string;
+  totalScore: string;
+}
+
+const mapDetailsAssignments = (record: RecordModel): detailsAssignments => ({
+  id: record.id,
+  revision: record.revision,
+  teacherid: record.teacherid,
+  studentid: record.studentid,
+  score: record.score,
+  totalScore: record.totalScore,
+});
+
+const fetchAssignments = async (): Promise<detailsAssignments[]> => {
+  const res = await db.collection("assignments").getFullList();
+  return res.map(mapDetailsAssignments);
+};
+
+export const useGetAssignments = () => {
+  return useQuery({
+    queryKey: ["assignments"],
+    queryFn: fetchAssignments,
+  });
+};

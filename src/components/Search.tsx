@@ -48,7 +48,7 @@ export default function SearchHalaqa() {
       </div>
       <div className="w-full h-[var(--height-screen)] grid grid-cols-5 gap-6 p-6">
         {filterData?.map((item) => (
-          <div key={item.id} className="h-56 rounded-lg bg-secondary hover:bg-hoverbg flex justify-center items-center flex-col p-2 transition ease-in-out hover:scale-110">
+          <div key={item.id} className="h-56 rounded-lg bg-secondary card-hover-effect relative overflow-hidden flex justify-center items-center flex-col p-2 transition ease-in-out hover:scale-110">
             <BookOpenText size={100} strokeWidth={1.5} />
             <p><span className="font-bold">إسم الحلقة :</span> {item.name}</p>
             <p><span className="font-bold">رقم السجل :</span> {item.halaqa_id}</p>

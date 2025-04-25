@@ -4,7 +4,9 @@ import { useLocation } from "react-router-dom"
 import { MultiValue } from 'react-select';
 import data from '../data/data.json'
 import SelecteComponent from "./SelecteComponent";
-import { db } from "../data/db";
+import { db, useGetAssignments } from "../data/db";
+import Assignments from "./Assignments";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface OptionType {
   value: string;
@@ -13,6 +15,7 @@ interface OptionType {
 
 export default function DetailsStudent() {
   const location = useLocation()
+  const queryClient = useQueryClient();
   const message = location.state
 
   const [selectedSurah, setSelectedSurah] = useState<MultiValue<OptionType>>([]);
@@ -29,7 +32,20 @@ export default function DetailsStudent() {
 
   const handleSubmitAssignments = () => {
     const mergedArray = [...selectedSurah, ...selectedPart, ...selectedPage, ...selectedOption]
-    console.log(mergedArray)
+    mergedArray.forEach(async (surah) => {
+      await db.collection('assignments').create({
+        revision: surah.label,
+        score: 10,
+        totalScore: 0,
+        teacherid: db.authStore.model?.id,
+        studentid: message.id,
+      });
+      await queryClient.invalidateQueries({ queryKey: ["assignments"]});
+      setSelectedSurah([])
+      setSelectedPage([])
+      setSelectedPart([])
+      setSelectedOption([])
+    });
   }
 
   const options = [
@@ -37,9 +53,13 @@ export default function DetailsStudent() {
     { value: 'banana', label: '🍌 Banana' },
     { value: 'cherry', label: '🍒 Cherry' },
   ];
+
+  const { data: assignments } = useGetAssignments();
+  const total = assignments?.reduce((sum, item) => sum + Number(item.totalScore), 0) ?? 0;
+  const targetScore = assignments?.length ? total / assignments.length : 0;
   
   return (
-    <div className="w-full h-[calc(100vh-40px)] bg-gray-200 grid grid-cols-6 grid-rows-6 gap-4 p-2">
+    <div className="w-full h-[var(--height-screen)] bg-gray-200 grid grid-cols-6 grid-rows-6 gap-4 p-2">
 
       <div className="col-span-4 row-span-6 border-2 border-gray-500 flex flex-col items-center mt-2 rounded-lg">
 
@@ -90,39 +110,39 @@ export default function DetailsStudent() {
                 <Check />
               </div>
               {selectedSurah.map((item) =>
-                <div key={item.value} className="flex justify-center items-center h-fit bg-gray-300 mx-1 p-1 rounded-xl">
-                  <p className="text-gray-700">{item.label}</p>
+                <div key={item.value} className="flex justify-center items-center h-fit bg-secondary mx-1 p-1 rounded-xl">
+                  <p className="font-bold">{item.label}</p>
                   <X
                     onClick={() =>
                       setSelectedSurah(prev => prev.filter(i => i.value !== item.value))
                     }
-                    className="mr-4 text-gray-500 hover:text-red-500 cursor-pointer hover:rotate-90 transition-transform duration-300"
+                    className="mr-4 text-gray-800 hover:text-red-500 cursor-pointer hover:rotate-90 transition-transform duration-300"
                     size={15}
                     strokeWidth={3}
                   />
                 </div>
               )}
               {selectedPart.map((item) =>
-                <div key={item.value} className="flex justify-center items-center h-fit bg-gray-300 mx-1 p-1 rounded-xl">
-                  <p className="text-gray-700">{item.label}</p>
+                <div key={item.value} className="flex justify-center items-center h-fit mx-1 p-1 rounded-xl bg-secondary">
+                  <p className="font-bold">{item.label}</p>
                   <X
                     onClick={() =>
                       setSelectedPart(prev => prev.filter(i => i.value !== item.value))
                     }
-                    className="mr-4 text-gray-500 hover:text-red-500 cursor-pointer hover:rotate-90 transition-transform duration-300"
+                    className="mr-4 text-gray-800 hover:text-red-500 cursor-pointer hover:rotate-90 transition-transform duration-300"
                     size={15}
                     strokeWidth={3}
                   />
                 </div>
               )}
               {selectedPage.map((item) =>
-                <div key={item.value} className="flex justify-center items-center h-fit bg-gray-300 mx-1 p-1 rounded-xl">
-                  <p className="text-gray-700">{item.label}</p>
+                <div key={item.value} className="flex justify-center items-center h-fit bg-secondary mx-1 p-1 rounded-xl">
+                  <p className="font-bold">{item.label}</p>
                   <X
                     onClick={() =>
                       setSelectedPage(prev => prev.filter(i => i.value !== item.value))
                     }
-                    className="mr-4 text-gray-500 hover:text-red-500 cursor-pointer hover:rotate-90 transition-transform duration-300"
+                    className="mr-2 ml-1 text-gray-800 hover:text-red-500 cursor-pointer hover:rotate-90 transition-transform duration-300"
                     size={15}
                     strokeWidth={3}
                   />
@@ -131,17 +151,14 @@ export default function DetailsStudent() {
             </div>
           </div>
         }
-        <div className="">
-          
-        </div>
-        {/* student here */}
+        <Assignments />
       </div>
 
       <div className="col-span-2 row-span-2 col-start-5">
         <div className="border-2 border-gray-500 flex justify-around mt-2 rounded-lg">
           <div className="flex justify-center items-center flex-col text-lg font-bold">
             <p>الإسم : {message.name}</p>
-            <p>النتيجة : {message.score}</p>
+            <p>النتيجة : {targetScore}</p>
           </div>
           <CircleUserRound size={150} strokeWidth={1}/>
         </div>

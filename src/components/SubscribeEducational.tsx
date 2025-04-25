@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { db, useGetDetailsHalaqa, useGetHalaqat } from "../data/db"
 import { BookOpenText, Search } from "lucide-react";
 
@@ -30,10 +30,10 @@ export default function SubscribeEducational() {
       {filterData?.length === 0 ? 
         <div className="w-full h-[var(--height-screen)] flex flex-col justify-center items-center bg-background">
           <p className="text-xl font-bold text-gray-600 mb-1">انت غير مشترك في اي حلقه</p>
-          <a href="/search" className="text-lg text-gray-500 cursor-pointer flex">
+          <Link to="/search" className="text-lg text-gray-500 cursor-pointer flex">
             <p>اضغط هنا للبحث عن حلقات</p>
             <Search size={25}/>
-          </a>
+          </Link>
         </div>
         :
         <div className="w-full h-[var(--height-screen)] bg-background grid grid-cols-5 gap-6 p-6" >
@@ -42,7 +42,7 @@ export default function SubscribeEducational() {
               <div     
                 key={item.id} 
                 onClick={() => handelGoToDetailsStudent(item.name)}
-                className="h-50 rounded-lg bg-secondary hover:bg-hoverbg cursor-pointer flex justify-center items-center flex-col transition ease-in-out hover:scale-110"
+                className="h-50 rounded-lg bg-secondary card-hover-effect relative overflow-hidden cursor-pointer flex justify-center items-center flex-col transition ease-in-out hover:scale-110"
               >
                 <BookOpenText size={100} strokeWidth={1.5} />
                 <p><span className="font-bold">إسم الحلقة :</span> {item.name}</p>

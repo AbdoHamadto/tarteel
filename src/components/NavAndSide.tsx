@@ -1,7 +1,7 @@
 import { Menu, X,  CircleUserRound, BookOpenText } from "lucide-react"
 import { useState } from "react"
 import { db } from "../data/db"
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Outlet } from "react-router-dom";
 
 export default function NavAndSide() {
@@ -17,13 +17,13 @@ export default function NavAndSide() {
       <nav className="w-full h-14 flex justify-center items-center bg-primary">
         <div className="w-11/12 mx-auto flex justify-between items-center px-4">
           <div>
-            {db.authStore.model?.collectionName === "students" && <a href="/search" className="mx-2 text-xl font-bold">البحث</a>}
+            {db.authStore.model?.collectionName === "students" && <Link to="/search" className="mx-2 text-xl font-bold">البحث</Link>}
           </div>
           <div className="flex">
-            <a href="/" className="flex ml-8 justify-center items-center">
+            <Link to="/" className="flex ml-8 justify-center items-center">
               <p className="font-bold ml-1 text-2xl">ترتيل</p>
               <BookOpenText size={30}/>
-            </a>
+            </Link>
             {sideBar ? 
               <X size={30} className="cursor-pointer" onClick={() => setSideBar(!sideBar)} />
               :
