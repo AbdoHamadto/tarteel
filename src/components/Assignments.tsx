@@ -3,15 +3,31 @@ import { db, useGetAssignments } from "../data/db"
 import { Check, X, Trash2 } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
+import { useLocation } from "react-router-dom";
 
-export default function Assignments() {
+interface ListAssignmentsProps {
+  idStudent: string;
+  idHalaqa: string;
+}
+
+export default function Assignments({idStudent, idHalaqa}: ListAssignmentsProps) {
   const queryClient = useQueryClient();
+  const location = useLocation()
+  const message = location.state
+  console.log(message.idHalaqa)
   const [selectScore, setSelectScore] = useState<{ [id: string]: boolean }>({});
   const [score, setScore] = useState<{ [id: string]: number }>({});
 
   // click for 24 hour
   const [isAvailable, setIsAvailable] = useState<{ [id: string]: boolean }>({});
   const { data: assignments, isLoading, isError, error } = useGetAssignments()
+  const finalIdStudent = idStudent || db.authStore.model?.id || '';
+  const finalIdHalaqa = idHalaqa || message.idHalaqa || '';
+  const filteredAssignments = assignments?.filter(
+    (assignment) =>
+      assignment.studentid.includes(finalIdStudent) &&
+      assignment.idHalaqa.includes(finalIdHalaqa)
+  );
 
   const checkIfAvailableToday = (id: string): boolean => {
     const lastClicked = localStorage.getItem(`button_last_clicked-${id}`);
@@ -35,7 +51,7 @@ export default function Assignments() {
     const today = new Date().toISOString().split("T")[0];
 
     if (!doTeacher && isAvailable[id]) {
-      const findAssignments = assignments?.find((item) => item.id === id);
+      const findAssignments = filteredAssignments?.find((item) => item.id === id);
       if (!findAssignments) return;
 
       await db.collection("assignments").update(id, {
@@ -88,12 +104,13 @@ export default function Assignments() {
 
   if (isLoading) return <p className="text-blue-500">Loading...</p>;
   if (isError) return <p className="text-red-500">Error: {error?.message}</p>;
+  // الرضا | اليقين | القناعه 
   return (
     <div 
       className={`mx-auto mt-4 border-2 rounded-lg flex flex-col gap-2 overflow-y-auto relative
         ${doTeacher ? "border-gray-400 h-[410px] w-11/12 px-2 pt-4" : "border-transparent h-full w-full"}`}
     >
-      {assignments?.map((item, index) => 
+      {filteredAssignments?.map((item, index) => 
         <div 
           key={item.id} 
           className={`flex list-hover-effect relative overflow-hidden justify-between items-center p-1 px-3 min-h-[40px] mx-auto border border-gray-600 rounded-lg mb-1

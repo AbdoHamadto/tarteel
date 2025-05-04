@@ -6,19 +6,20 @@ export default function SubscribeEducational() {
   const { data: ElHalaqat, isLoading, isError, error } = useGetHalaqat()
   const userId = db.authStore.model?.id
   const filterData = ElHalaqat?.filter((item) => item.students.includes(userId || ""))
+  console.log(filterData)
 
   const { data: DetailsElHalaqat} = useGetDetailsHalaqa()
   const filterStudents = DetailsElHalaqat?.filter((item) => item.idStudent === db.authStore.model?.id)[0]
-  console.log(filterStudents)
 
   const navigate = useNavigate()
 
   if (isLoading) return <p className="text-blue-500">Loading...</p>;
   if (isError) return <p className="text-red-500">Error: {error?.message}</p>;
 
-  const handelGoToDetailsStudent = (halaqaName: string) => {
+  const handelGoToDetailsStudent = (halaqaName: string, idHalaqa: string) => {
     navigate(`/halaqa/${halaqaName}`,{
       state: {
+        idHalaqa: idHalaqa,
         name: filterStudents?.name,
         score: filterStudents?.score,
       }
@@ -41,7 +42,7 @@ export default function SubscribeEducational() {
             filterData?.map((item) => (
               <div     
                 key={item.id} 
-                onClick={() => handelGoToDetailsStudent(item.name)}
+                onClick={() => handelGoToDetailsStudent(item.name, item.id)}
                 className="h-50 rounded-lg bg-secondary card-hover-effect relative overflow-hidden cursor-pointer flex justify-center items-center flex-col transition ease-in-out hover:scale-110"
               >
                 <BookOpenText size={100} strokeWidth={1.5} />

@@ -12,6 +12,7 @@ export default function DetailsHalaqa() {
   const navigate = useNavigate()
   const location = useLocation()
   const message = location.state;
+  console.log(message)
 
   const { data: DetailsElHalaqat, isLoading, isError, error } = useGetDetailsHalaqa()
   const filterStudents = DetailsElHalaqat?.filter((item) => item.idHalaqa === message.id)
@@ -50,7 +51,7 @@ export default function DetailsHalaqa() {
             <hr className="w-2/4 mb-5"/>
           </div>
           <div>
-            <ListStudents students={filterStudents} nameHalaqa={message.name} />
+            <ListStudents students={filterStudents} nameHalaqa={message.name} idHalaqa={message.id}/>
           </div>
         </div>
         <p className="text-xl font-bold border-2 rounded-lg w-full text-center p-2 ">عدد الطلاب : {filterStudents?.length}</p>

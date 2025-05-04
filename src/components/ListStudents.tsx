@@ -10,14 +10,16 @@ interface Student {
 interface ListStudentsProps {
   students?: Student[];
   nameHalaqa: string;
+  idHalaqa: string;
 }
 
-export default function ListStudents({ students , nameHalaqa}: ListStudentsProps) {
-  const navigat = useNavigate()
+export default function ListStudents({ students , nameHalaqa, idHalaqa}: ListStudentsProps) {
+  const navigate = useNavigate()
   const handelGoToDetailsStudent = (studentName: string, studentScore: string, studentid: string) => {
-    navigat(`/halaqa/${nameHalaqa}/${studentName}`,{
+    navigate(`/halaqa/${nameHalaqa}/${studentName}`,{
       state: {
-        id: studentid,
+        idStudent: studentid,
+        idHalaqa: idHalaqa,
         name: studentName,
         score: studentScore,
       }

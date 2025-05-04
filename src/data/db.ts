@@ -135,6 +135,7 @@ export interface detailsAssignments {
   studentid: string;
   score: string;
   totalScore: string;
+  idHalaqa: string;
 }
 
 const mapDetailsAssignments = (record: RecordModel): detailsAssignments => ({
@@ -144,6 +145,7 @@ const mapDetailsAssignments = (record: RecordModel): detailsAssignments => ({
   studentid: record.studentid,
   score: record.score,
   totalScore: record.totalScore,
+  idHalaqa: record.idHalaqa,
 });
 
 const fetchAssignments = async (): Promise<detailsAssignments[]> => {

@@ -38,7 +38,8 @@ export default function DetailsStudent() {
         score: 10,
         totalScore: 0,
         teacherid: db.authStore.model?.id,
-        studentid: message.id,
+        studentid: message.idStudent,
+        idHalaqa: message.idHalaqa,
       });
       await queryClient.invalidateQueries({ queryKey: ["assignments"]});
       setSelectedSurah([])
@@ -151,7 +152,7 @@ export default function DetailsStudent() {
             </div>
           </div>
         }
-        <Assignments />
+        <Assignments idStudent={message.idStudent} idHalaqa={message.idHalaqa}/>
       </div>
 
       <div className="col-span-2 row-span-2 col-start-5">
