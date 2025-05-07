@@ -46,7 +46,7 @@ export default function SearchHalaqa() {
         />
         <Search className="text-gray-700 border-r-0 border-2 border-gray-600 h-10 rounded-l-lg cursor-pointer"/>
       </div>
-      <div className="w-full h-[var(--height-screen)] grid grid-cols-5 gap-6 p-6">
+      <div className="w-full h-[calc(var(--height-screen)-120px)] grid grid-cols-5 gap-6 p-6">
         {filterData?.map((item) => (
           <div key={item.id} className="h-56 rounded-lg bg-secondary card-hover-effect relative overflow-hidden flex justify-center items-center flex-col p-2 transition ease-in-out hover:scale-110">
             <BookOpenText size={100} strokeWidth={1.5} />

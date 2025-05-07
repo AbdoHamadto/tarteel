@@ -154,9 +154,11 @@ export default function Assignments({idStudent, idHalaqa}: ListAssignmentsProps)
             >
               {isAvailable[item.id] ? (
                   <Check size={20} />
-                ) : (
+                ) : doTeacher ?
+                  <Check size={20} /> 
+                  :
                   <span className="text-xs text-gray-500">غداً</span>
-                )}
+                }
               
             </div>
             {doTeacher && 

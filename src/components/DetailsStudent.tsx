@@ -1,12 +1,13 @@
-import { Check, CircleUserRound, Trash2, X } from "lucide-react"
+import { Check, Trash2, X } from "lucide-react"
 import { useState } from "react";
 import { useLocation } from "react-router-dom"
 import { MultiValue } from 'react-select';
 import data from '../data/data.json'
 import SelecteComponent from "./SelecteComponent";
-import { db, useGetAssignments } from "../data/db";
+import { db } from "../data/db";
 import Assignments from "./Assignments";
 import { useQueryClient } from "@tanstack/react-query";
+import ScoreStudent from "./ScoreStudent";
 
 interface OptionType {
   value: string;
@@ -55,10 +56,6 @@ export default function DetailsStudent() {
     { value: 'cherry', label: '🍒 Cherry' },
   ];
 
-  const { data: assignments } = useGetAssignments();
-  const total = assignments?.reduce((sum, item) => sum + Number(item.totalScore), 0) ?? 0;
-  const targetScore = assignments?.length ? Math.round(total / assignments.length) : 0;
-  
   return (
     <div className="w-full h-[var(--height-screen)] bg-gray-200 grid grid-cols-6 grid-rows-6 gap-4 p-2">
 
@@ -154,16 +151,7 @@ export default function DetailsStudent() {
         }
         <Assignments idStudent={message.idStudent} idHalaqa={message.idHalaqa}/>
       </div>
-
-      <div className="col-span-2 row-span-2 col-start-5">
-        <div className="border-2 border-gray-500 flex justify-around mt-2 rounded-lg">
-          <div className="flex justify-center items-center flex-col text-lg font-bold">
-            <p>الإسم : {message.name}</p>
-            <p>النتيجة : {targetScore}</p>
-          </div>
-          <CircleUserRound size={150} strokeWidth={1}/>
-        </div>
-      </div>
+      <ScoreStudent idStudent={message.idStudent} idHalaqa={message.idHalaqa}/>
     </div>
   )
 }
