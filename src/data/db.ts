@@ -2,7 +2,7 @@ import PocketBase from 'pocketbase';
 import { RecordModel } from 'pocketbase';
 import { useQuery } from '@tanstack/react-query';
 
-export const db = new PocketBase("http://127.0.0.1:8090") //  https://dar.devsmith.duckdns.org
+export const db = new PocketBase("http://127.0.0.1:8090")
 db.autoCancellation(false)
 
 export interface halaqa {
